@@ -1,0 +1,222 @@
+<!doctype html>
+
+<head>
+    <title>game</title>
+</head>
+
+
+<body>
+    <canvas id="gameCanvas" width="400" height="400">
+
+        <script>
+            var canvas, canvasContext;
+
+            window.onload = function() {
+                canvas = document.getElementById('gameCanvas');
+                canvasContext = canvas.getContext('2d');
+
+
+
+                document.addEventListener('keydown', keyPressed);
+                document.addEventListener('keyup', keyReleased);
+
+
+
+                for (var i = 0; i < 25; i++) {
+
+                }
+
+
+
+                setInterval(mainloop, 1000 / 50);
+            }
+
+
+
+            var diffculty = prompt('how hard do you want it?', 'hard or easy');
+            if (diffculty != 'easy' || diffculty != 'hard') {
+                var pass = false;
+                while (pass == false) {
+                    diffculty = prompt('how hard?', 'easy');
+                    // if difficulty is what we wanted then set pass to true
+                    if (diffculty == 'easy' || diffculty == 'hard') {
+                        var pass = true;
+                    }
+                }
+            }
+
+
+
+
+
+            var playerXpos = 50;
+            var playerYpos = 50;
+            var playerXspeed = 5;
+            var playerYspeed = 5;
+            var playerSize = 20;
+
+            if (diffculty == 'easy') {
+                ObjectsXspeed = 4;
+            } else {
+                ObjectsXspeed = 15;
+            }
+
+
+            const A_Key = 65;
+            const D_Key = 68;
+            const W_Key = 87;
+            const S_Key = 83;
+
+            var AKeyPressed = false;
+            var DkeyPressed = false;
+            var WkeyPressed = false;
+            var SKeyPressed = false;
+
+            var Objects = [];
+
+            var score = 0;
+
+            var ObjectsXpos = 0;
+            var ObjectsYpos = 0;
+            var ObjectsXspeed = 5;
+            var ObjectsYspeed = 5;
+            var ObjectsSize = 20;
+
+            var gamestarting = true;
+            
+            var setUp = true;
+            
+            function mainloop() { // loop runs code 50 times per second
+                colorRect(0, 0, canvas.width, canvas.height, '#0000ff') //bg
+                colorRect(playerXpos, playerYpos, playerSize, playerSize, 'gold');
+                colorRect(ObjectsXpos, ObjectsYpos, ObjectsSize, ObjectsSize, 'red');
+                
+                if(setUp){
+                    for(i =0; i < totalObjects; i++){
+                        randObjects();
+                    }
+                    setUp = false;
+                }
+                playermove();
+                Objectsmove();
+                ObjectsDraw();
+                randObjects();
+                
+            }
+
+            function keyPressed(evt) {
+                if (evt.keyCode == 65) {
+                    AKeyPressed = true;
+                }
+                if (evt.keyCode == 68) {
+
+                    DkeyPressed = true;
+                }
+
+                if (evt.keyCode == 87) {
+                    WkeyPressed = true;
+                }
+
+                if (evt.keyCode == 83) {
+                    SkeyPressed = true;
+                }
+            }
+
+
+            function keyReleased(evt) {
+
+                if (evt.keyCode == 65) {
+                    AKeyPressed = false;
+                }
+
+                if (evt.keyCode == 68) {
+                    DkeyPressed = false;
+                }
+
+                if (evt.keyCode == 87) {
+                    WkeyPressed = false;
+                }
+
+                if (evt.keyCode == 83) {
+                    SkeyPressed = false;
+                }
+            }
+
+            function playermove() {
+
+                if (DkeyPressed == true && playerXpos < canvas.width - playerSize) {
+                    playerXpos += playerXspeed;
+                }
+                if (WkeyPressed == true && playerYpos > 0) {
+                    playerYpos -= playerYspeed;
+                }
+                if (SkeyPressed == true && playerYpos < canvas.height - playerSize) {
+                    playerYpos += playerYspeed;
+                }
+                if (AKeyPressed == true && playerXpos > 0) {
+                    playerXpos -= playerXspeed;
+                    canvas.height - playerSize
+                }
+            }
+
+            function ObjectsDraw() {
+                Objects.forEach(function(Objects, index, array) {
+                    colorRect(Objects.ObjectsXpos, Objects.ObjectsYpos, Objects.ObjectsSize, Objects.ObjectsSize, 'Indigo');
+
+                });
+            }
+
+
+
+
+
+            function Objectsmove() {
+                Objects.forEach(function(Objects, index, array) {
+
+                    Objects.ObjectsXpos += Objects.ObjectsXspeed;
+                    Objects.ObjectsYpos += Objects.ObjectsYspeed;
+
+                    if (Objects.ObjectsXpos > canvas.width - Objects.ObjectsSize) {
+                        Objects.ObjectsXspeed *= -1;
+                    }
+                    if (Objects.ObjectsXpos < 0) {
+                        Objects.ObjectsXspeed *= -1;
+                    }
+                    if (Objects.ObjectsYpos > canvas.height - Objects.ObjectsSize) {
+                        Objects.ObjectsYpos = 0;
+                        Objects.ObjectsSize = Math.floor(Math.random() * (10 - 5) + 5);
+                        score++;
+
+                    }
+                });
+            }
+
+            var totalObjects = 12;
+            
+            function randObjects() {
+                var ObjectsSize = Math.floor(Math.random() * (50 - 10) + 10);
+                var ObjectsYpos = Math.floor(Math.random() * (canvas.height - ObjectsSize));
+                var ObjectsXpos = Math.floor(Math.random() * (canvas.width - ObjectsSize));
+                var ObjectsYspeed = Math.floor(Math.random() * (15 - 2) + 2);
+                var ObjectsXspeed = Math.floor(Math.random() * (15 - 2) + 2);
+
+                var newObjects = {
+                    ObjectsSize: ObjectsSize,
+                    ObjectsXpos: ObjectsXpos,
+                    ObjectsYpos: ObjectsYpos,
+                    ObjectsXspeed: ObjectsXspeed,
+                    ObjectsYspeed: ObjectsYspeed
+                }
+                //                return newObjects;
+            }
+
+
+            function colorRect(x, y, w, h, c) {
+                canvasContext.fillStyle = c;
+                canvasContext.fillRect(x, y, w, h);
+
+            }
+
+        </script>
+    </canvas>
+</body>
