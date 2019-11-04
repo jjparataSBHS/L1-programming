@@ -38,17 +38,12 @@
                 var pass = false;
                 while (pass == false) {
                     diffculty = prompt('how hard?', 'easy');
-                    // if difficulty is what we wanted then set pass to true
+
                     if (diffculty == 'easy' || diffculty == 'hard') {
                         var pass = true;
                     }
                 }
             }
-
-
-
-
-
             var playerXpos = 50;
             var playerYpos = 50;
             var playerXspeed = 5;
@@ -59,6 +54,7 @@
                 ObjectsXspeed = 4;
             } else {
                 ObjectsXspeed = 15;
+                 totalObjects = 12;
             }
 
 
@@ -75,6 +71,7 @@
             var Objects = [];
 
             var score = 0;
+            var death = 0;
 
             var ObjectsXpos = 0;
             var ObjectsYpos = 0;
@@ -82,29 +79,35 @@
             var ObjectsYspeed = 5;
             var ObjectsSize = 20;
 
-            var gamestarting = true;
-            
+            var gamestartingpos = true;
+            var gameRun = true;
             var setUp = true;
-            
-            function mainloop() { // loop runs code 50 times per second
-                colorRect(0, 0, canvas.width, canvas.height, '#0000ff') //bg
-                colorRect(playerXpos, playerYpos, playerSize, playerSize, 'gold');
-                colorRect(ObjectsXpos, ObjectsYpos, ObjectsSize, ObjectsSize, 'red');
-                
-                if(setUp){
-                    for(i =0; i < totalObjects; i++){
-                        randObjects();
-                    }
-                    setUp = false;
-                }
-                playermove();
-                Objectsmove();
-                ObjectsDraw();
-                randObjects();
-                
-            }
 
-            function keyPressed(evt) {
+            function mainloop() { // loop runs code 50 times per second
+                if (gameRun) {
+
+
+                    colorRect(0, 0, canvas.width, canvas.height, '#0000ff') //bg
+                    colorRect(playerXpos, playerYpos, playerSize, playerSize, 'gold');
+                    //colorRect(ObjectsXpos, ObjectsYpos, ObjectsSize, ObjectsSize, 'red'); // enemy
+                    drawText('score:  ' + score, 50, 50, '20px Arial', 'red');
+                    drawText('deaths:  ' + death, canvas.width - 100, 50, '20pxArial', 'red');
+                    if (setUp) {
+                        for (i = 0; i < totalObjects; i++) {
+                            randObjects();
+                        }
+                        setUp = false;
+                    }
+                    playermove();
+                    ObjectsDraw();
+                    Objectsmove();
+
+                    drawText('18pt ARIAL BLACK', 'red', 'score ' + score, 15, 30);
+                }
+            } // mainloop func ends
+
+
+            function keyPressed(evt) { // when player pressed one of the keys
                 if (evt.keyCode == 65) {
                     AKeyPressed = true;
                 }
@@ -118,12 +121,12 @@
                 }
 
                 if (evt.keyCode == 83) {
-                    SkeyPressed = true;
+                    SKeyPressed = true;
                 }
-            }
+            } // keypressed func ends
 
 
-            function keyReleased(evt) {
+            function keyReleased(evt) { //when player released one of the keys
 
                 if (evt.keyCode == 65) {
                     AKeyPressed = false;
@@ -138,11 +141,12 @@
                 }
 
                 if (evt.keyCode == 83) {
-                    SkeyPressed = false;
-                }
-            }
+                    SKeyPressed = false;
 
-            function playermove() {
+                }
+            } // keyreleased func ends
+
+            function playermove() { // these are the keys for the playermove
 
                 if (DkeyPressed == true && playerXpos < canvas.width - playerSize) {
                     playerXpos += playerXspeed;
@@ -150,18 +154,18 @@
                 if (WkeyPressed == true && playerYpos > 0) {
                     playerYpos -= playerYspeed;
                 }
-                if (SkeyPressed == true && playerYpos < canvas.height - playerSize) {
+                if (SKeyPressed == true && playerYpos < canvas.height - playerSize) {
                     playerYpos += playerYspeed;
                 }
                 if (AKeyPressed == true && playerXpos > 0) {
                     playerXpos -= playerXspeed;
                     canvas.height - playerSize
                 }
-            }
+            } // playermove func ends
 
             function ObjectsDraw() {
                 Objects.forEach(function(Objects, index, array) {
-                    colorRect(Objects.ObjectsXpos, Objects.ObjectsYpos, Objects.ObjectsSize, Objects.ObjectsSize, 'Indigo');
+                    colorRect(Objects.ObjectsXpos, Objects.ObjectsYpos, Objects.ObjectsSize, Objects.ObjectsSize, 'red');
 
                 });
             }
@@ -170,7 +174,7 @@
 
 
 
-            function Objectsmove() {
+            function Objectsmove() { // objectsmove func open
                 Objects.forEach(function(Objects, index, array) {
 
                     Objects.ObjectsXpos += Objects.ObjectsXspeed;
@@ -188,12 +192,18 @@
                         score++;
 
                     }
-                });
-            }
 
-            var totalObjects = 12;
-            
-            function randObjects() {
+                    if (Objects.ObjectsXpos + Objects.ObjectsSize > playerXpos && Objects.ObjectsXpos < playerXpos + playerSize && Objects.ObjectsYpos + Objects.ObjectsSize > playerYpos && Objects.ObjectsYpos < playerYpos + playerSize) {
+                        playerXpos = 0;
+                        playerYpos = 0;
+                        death++;
+                    }
+                });
+            } // objectsmove func closed
+
+            var totalObjects = 3;
+
+            function randObjects() { // randobjects func open
                 var ObjectsSize = Math.floor(Math.random() * (50 - 10) + 10);
                 var ObjectsYpos = Math.floor(Math.random() * (canvas.height - ObjectsSize));
                 var ObjectsXpos = Math.floor(Math.random() * (canvas.width - ObjectsSize));
@@ -207,14 +217,20 @@
                     ObjectsXspeed: ObjectsXspeed,
                     ObjectsYspeed: ObjectsYspeed
                 }
-                //                return newObjects;
-            }
+                Objects.push(newObjects);
+            } // randobjects func closed
 
 
             function colorRect(x, y, w, h, c) {
                 canvasContext.fillStyle = c;
                 canvasContext.fillRect(x, y, w, h);
 
+            }
+
+            function drawText(msg, x, y, f, c) {
+                canvasContext.fillStyle = c;
+                canvasContext.font = f; // '20px arial'
+                canvasContext.fillText(msg, x, y);
             }
 
         </script>
