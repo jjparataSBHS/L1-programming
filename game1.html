@@ -31,31 +31,12 @@
                 setInterval(mainloop, 1000 / 50);
             }
 
-
-
-            var diffculty = prompt('how hard do you want it?', 'hard or easy');
-            if (diffculty != 'easy' || diffculty != 'hard') {
-                var pass = false;
-                while (pass == false) {
-                    diffculty = prompt('how hard?', 'easy');
-
-                    if (diffculty == 'easy' || diffculty == 'hard') {
-                        var pass = true;
-                    }
-                }
-            }
             var playerXpos = 50;
             var playerYpos = 50;
             var playerXspeed = 5;
             var playerYspeed = 5;
             var playerSize = 20;
 
-            if (diffculty == 'easy') {
-                ObjectsXspeed = 4;
-            } else {
-                ObjectsXspeed = 15;
-                 totalObjects = 12;
-            }
 
 
             const A_Key = 65;
@@ -80,12 +61,15 @@
             var ObjectsSize = 20;
 
             var gamestartingpos = true;
-            var gameRun = true;
+            var gameRun = false;
             var setUp = true;
-
+            var endScreen = false;
+            var diffcultyNotSet = true;
+            var startScreen = true;
+            
             function mainloop() { // loop runs code 50 times per second
-                if (gameRun) {
-
+                if (gameRun == true) {
+                    startScreen = false;
 
                     colorRect(0, 0, canvas.width, canvas.height, '#0000ff') //bg
                     colorRect(playerXpos, playerYpos, playerSize, playerSize, 'gold');
@@ -98,11 +82,53 @@
                         }
                         setUp = false;
                     }
+
+                    if (death == 10) {
+                        gameRun = false;
+                        endScreen = true;
+                    }
+
                     playermove();
                     ObjectsDraw();
                     Objectsmove();
 
                     drawText('18pt ARIAL BLACK', 'red', 'score ' + score, 15, 30);
+                } else if (gameRun == false) {
+
+                    if (diffcultyNotSet == false) {
+
+                        var diffculty = prompt('how hard do you want it?', 'hard or easy');
+                        if (diffculty != 'easy' || diffculty != 'hard') {
+                            var pass = false;
+                            while (pass == false) {
+                                diffculty = prompt('how hard?', 'easy');
+
+                                if (diffculty == 'easy' || diffculty == 'hard') {
+                                    var pass = true;
+                                    gameRun = true;
+                                    diffcultyNotSet = true;
+                                    console.log('test');
+                                }
+                            }
+                        }
+                        if (diffculty == 'easy') {
+                            ObjectsXspeed = 4;
+                        } else {
+                            ObjectsXspeed = 15;
+                            totalObjects = 12;
+                        }
+                    }
+                    if(startScreen == true){
+                       colorRect(0, 0, canvas.width, canvas.height, 'red');
+                        drawText('the controls are wasd you need to dodge the falling objects andyou only have 10 lives', 50, 100, '20px Arial', 'black');
+                        diffcultyNotSet = false;
+                       }
+
+
+                    if (endScreen == true) {
+
+                        drawText('End Screen', 50, 100, '20px Arial', 'red');
+                    }
                 }
             } // mainloop func ends
 
@@ -169,7 +195,6 @@
 
                 });
             }
-
 
 
 
